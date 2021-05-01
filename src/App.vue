@@ -1,28 +1,31 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <section class="AppContainer">
+        <router-view></router-view>
+        <app-footer v-if="$route.meta.showFooter"></app-footer>
+    </section>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+    import AppFooter from "./components/AppFooter/AppFooter";
+    import { SAVE_USER_INFO } from './model/mutation-types'
+    export default {
+        name: 'App',
+        props:['noFooter'],
+        components:{
+          AppFooter,
+        },
+        async mounted(){
+            //自动登录，解决刷新vuex数据丢失，重新根据用户识别信息token请求数据
+            const result = await this.$API.auto_login()
+            this.$store.commit(SAVE_USER_INFO, result.data)
+        }
+    }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="stylus">
+    .AppContainer
+        width 100%
+        height 100%
+        background #f5f5f5
+        position relative
 </style>
